@@ -37,7 +37,8 @@ class User(AbstractUser):
     fio = models.CharField('ФИО', max_length=50, blank=True, null=True, default='Иван')
     phone = models.CharField('Телефон', max_length=50, blank=True, null=True)
     email = models.EmailField('Эл. почта', blank=True, null=True, unique=True)
-
+    is_proger = models.BooleanField('Прогер', default=False)
+    is_designer = models.BooleanField('Дизайнер', default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -46,7 +47,7 @@ class User(AbstractUser):
 
 
     def __str__(self):
-        return f'{self.fio} {self.phone} '
+        return f'{self.fio} | {self.email} '
 
 
 

@@ -74,29 +74,35 @@ class EditColumn(APIView):
 class AddTask(APIView):
     def post(self,request):
         print(request.data)
-        column_id= request.data.get('c_id')
+        project_id = request.data.get('p_id')
+        column_id = request.data.get('c_id')
         data = json.loads(request.data.get('data'))
         file_names = request.data.getlist('file_names')
 
-        dead_line_raw = data['dead_line'].replace('Январь','01').\
-            replace('Февраль','02').\
-            replace('Март','03').\
-            replace('Апрель','04').\
-            replace('Май','05').\
-            replace('Июнь','06').\
-            replace('Июль','07').\
-            replace('Август','08').\
-            replace('Сентябрь','09').\
-            replace('Октябрь','10').\
-            replace('Ноябрь','11').\
+        dead_line_raw = data['dead_line'].replace('Январь','01'). \
+            replace('Февраль','02'). \
+            replace('Март','03'). \
+            replace('Апрель','04'). \
+            replace('Май','05'). \
+            replace('Июнь','06'). \
+            replace('Июль','07'). \
+            replace('Август','08'). \
+            replace('Сентябрь','09'). \
+            replace('Октябрь','10'). \
+            replace('Ноябрь','11'). \
             replace('Декабрь','12').split(' ')
 
         dead_line = f'{dead_line_raw[2]}-{dead_line_raw[1]}-{dead_line_raw[0]}'
-        task = Task.objects.create(column_id=column_id,
-                            name=data['name'],
-                            dead_line=dead_line,
-                            tag_id=data['tag']['id'],
-                            description=data['description'])
+        task = Task.objects.create(
+            project_id=project_id,
+            column_id=column_id,
+            name=data['name'],
+            dead_line=dead_line,
+            tag_id=data['tag']['id'],
+            description=data['description'],
+            is_proger_task=data['is_proger'],
+            is_designer_task=data['is_designer'],
+        )
 
         for i,name in enumerate(file_names):
             print(i)
@@ -138,6 +144,13 @@ class ReorderTasks(APIView):
 class DeleteTask(APIView):
     def post(self,request):
         Task.objects.get(id=request.data.get('id')).delete()
+        return Response(status=200)
+
+class TaskView(APIView):
+    def post(self,request):
+        task = Task.objects.get(id=request.data.get('id'))
+        task.is_new = False
+        task.save()
         return Response(status=200)
 
 class AddDone(APIView):

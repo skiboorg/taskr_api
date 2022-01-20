@@ -19,6 +19,8 @@ urlpatterns = [
     path('delete_task', views.DeleteTask.as_view()),
     path('move_task_to_col', views.MoveTaskToColumn.as_view()),
     path('reorder_tasks', views.ReorderTasks.as_view()),
+    path('task_view', views.TaskView.as_view()),
+
 
 
 ]

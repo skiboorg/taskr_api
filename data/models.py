@@ -1,11 +1,11 @@
 from django.db import models
 from pytils.translit import slugify
 import uuid
-
+from django.db.models.signals import post_save
 
 class Tag(models.Model):
     name = models.CharField('Название', max_length=100, blank=True, null=True)
-
+    color = models.CharField('Цвет, например red, blue, green', max_length=20, blank=True, null=True)
     def __str__(self):
         return f'{self.name}'
 
@@ -16,10 +16,24 @@ class Project(models.Model):
     name_slug = models.CharField('Название', max_length=100, blank=True, null=True,editable=False)
     image_mob = models.ImageField('Баннер', upload_to='project/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    new_tasks_count = models.IntegerField(default=0)
+    is_have_new_proger_task = models.BooleanField('Есть новые задачи прогеру', default=False)
+    is_have_new_designer_task = models.BooleanField('Есть новые задачи дизайнеру', default=False)
 
     def save(self, *args, **kwargs):
         self.name_slug = slugify(self.name)
+        print('sdf')
+        task_for_proger = False
+        task_for_designer = False
+        for task in self.task_set.all():
+            if task.is_proger_task and task.is_new:
+                task_for_proger = True
 
+            if task.is_designer_task and task.is_new:
+                task_for_designer = True
+
+        self.is_have_new_designer_task = task_for_designer
+        self.is_have_new_proger_task = task_for_proger
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -42,6 +56,7 @@ class Column(models.Model):
 
 class Task(models.Model):
     order_num = models.CharField(blank=True,null=True, max_length=10)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
     column = models.ForeignKey(Column, on_delete=models.CASCADE, null=True, blank=True, related_name='tasks')
     tag = models.ForeignKey(Tag, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField('Название', max_length=100, blank=True, null=True)
@@ -49,6 +64,9 @@ class Task(models.Model):
     is_done = models.BooleanField(default=False)
     dead_line = models.DateField(blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_proger_task = models.BooleanField('Задача прогеру', default=False)
+    is_designer_task = models.BooleanField('Задача дизайнеру', default=False)
+    is_new = models.BooleanField('Новая', default=True)
 
     def __str__(self):
         return f'{self.order_num} - {self.name}'
@@ -57,6 +75,7 @@ class Task(models.Model):
         if not self.order_num:
             total_task_in_column = self.column.tasks.count()
             self.order_num = f'c{self.column.id}t{total_task_in_column+1}'
+
 
         super().save(*args, **kwargs)
 
@@ -75,3 +94,8 @@ class TaskComment(models.Model):
     text = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+def task_post_save(sender, instance, created, **kwargs):
+    """Создание всех значений по-умолчанию для нового пользовыателя"""
+    instance.project.save()
+
+post_save.connect(task_post_save, sender=Task)
