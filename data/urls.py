@@ -3,8 +3,10 @@ from . import views
 
 urlpatterns = [
     path('tags', views.GetTags.as_view()),
+    path('statuses', views.GetStatuses.as_view()),
     path('projects', views.GetProjects.as_view()),
     path('project', views.GetProject.as_view()),
+    path('project_status', views.ProjectStatus.as_view()),
     path('add_project_link', views.AddProjectLink.as_view()),
     path('del_project_link', views.DelProjectLink.as_view()),
     path('new_project', views.NewProject.as_view()),

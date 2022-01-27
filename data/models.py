@@ -9,11 +9,14 @@ class Tag(models.Model):
     def __str__(self):
         return f'{self.name}'
 
-
+class ProjectStatus(models.Model):
+    name = models.CharField('Название', max_length=100, blank=False, null=True)
+    icon = models.ImageField('Иконка', upload_to='icons/', blank=False, null=True)
 
 class Project(models.Model):
     name = models.CharField('Название', max_length=100, blank=True, null=True)
     name_slug = models.CharField('Название', max_length=100, blank=True, null=True,editable=False)
+    statuses = models.ManyToManyField(ProjectStatus, blank=True)
     image_mob = models.ImageField('Баннер', upload_to='project/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     new_tasks_count = models.IntegerField(default=0)
@@ -43,6 +46,8 @@ class ProjectLink(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True, related_name='links')
     name = models.CharField('Название', max_length=100, blank=True, null=True)
     link = models.TextField('ссылка',  blank=True, null=True)
+
+
 
 
 class Column(models.Model):

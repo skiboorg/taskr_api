@@ -6,6 +6,11 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = '__all__'
 
+class ProjectStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectStatus
+        fields = '__all__'
+
 class ProjectLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectLink
@@ -42,6 +47,7 @@ class ColumnSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     links = ProjectLinkSerializer(many=True, read_only=True, required=False)
     columns = ColumnSerializer(many=True, read_only=True, required=False)
+    # statuses = ProjectStatusSerializer(many=True, read_only=True, required=False)
     class Meta:
         model = Project
         fields = '__all__'

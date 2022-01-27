@@ -8,4 +8,5 @@ admin.site.register(Tag)
 admin.site.register(TaskFile)
 admin.site.register(ProjectLink)
 admin.site.register(TaskComment)
+admin.site.register(ProjectStatus)
 

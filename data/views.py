@@ -15,6 +15,10 @@ class GetTags(generics.ListAPIView):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
 
+class GetStatuses(generics.ListAPIView):
+    serializer_class = ProjectStatusSerializer
+    queryset = ProjectStatus.objects.all()
+
 
 class GetProject(generics.RetrieveAPIView):
     serializer_class = ProjectSerializer
@@ -47,6 +51,16 @@ class AddProjectLink(APIView):
 class DeleteProject(APIView):
     def post(self,request):
         Project.objects.get(id=request.data.get('id')).delete()
+        return Response(status=200)
+
+class ProjectStatus(APIView):
+    def post(self,request):
+        print(request.data)
+        project = Project.objects.get(id=request.data.get('id'))
+        project.statuses.clear()
+        for i in request.data.get('statuses'):
+            project.statuses.add(i)
+
         return Response(status=200)
 
 
