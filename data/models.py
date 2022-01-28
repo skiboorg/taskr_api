@@ -12,6 +12,7 @@ class Tag(models.Model):
 class ProjectStatus(models.Model):
     name = models.CharField('Название', max_length=100, blank=False, null=True)
     icon = models.ImageField('Иконка', upload_to='icons/', blank=False, null=True)
+    color = models.CharField('Цвет, например red, blue, green', max_length=20, blank=True, null=True)
 
 class Project(models.Model):
     name = models.CharField('Название', max_length=100, blank=True, null=True)
